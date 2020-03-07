@@ -1,0 +1,31 @@
+﻿@model List<Mvc.RoleAuthorization.Models.NavigationMenuViewModel>
+@{
+	ViewData["Title"] = "Edit Role Permission";
+}
+
+<h1>Edit Role Permission</h1>
+
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="EditRolePermission">
+			<div class="form-group">
+				<ul style="list-style-type: none;">
+					@for (var i = 0; i < Model.Count; i++)
+					{
+						<li>
+							<input type="checkbox" asp-for="@Model[i].Permitted" />
+							<label style="margin-left:10px;" asp-for="@Model[i].Permitted">@Model[i].Name</label>
+							<input type="hidden" asp-for="@Model[i].Id" />
+							<input type="hidden" asp-for="@Model[i].Name" />
+						</li>
+					}
+				</ul>
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Save" class="btn btn-primary" />
+				<a asp-action="Roles">Back to List</a>
+			</div>
+		</form>
+	</div>
+</div>

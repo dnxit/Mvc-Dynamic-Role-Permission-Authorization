@@ -1,0 +1,47 @@
+﻿@model Mvc.RoleAuthorization.Models.UserViewModel
+
+@{
+	ViewData["Title"] = "Edit User";
+}
+
+<h1>Edit User</h1>
+
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="EditUser">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<input type="hidden" asp-for="Id" class="form-control" />
+			<div class="form-group">
+				<label asp-for="UserName" class="control-label"></label>
+				<input asp-for="UserName" class="form-control" />
+				<span asp-validation-for="UserName" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Email" class="control-label"></label>
+				<input asp-for="Email" class="form-control" />
+				<span asp-validation-for="Email" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<ul style="list-style-type: none;">
+					@for (var i = 0; i < Model.Roles.Length; i++)
+					{
+						<li>
+							<input type="checkbox" asp-for="@Model.Roles[i].Selected" />
+							<label style="margin-left:10px;" asp-for="@Model.Roles[i].Selected">@Model.Roles[i].Name</label>
+							<input type="hidden" asp-for="@Model.Roles[i].Id" />
+							<input type="hidden" asp-for="@Model.Roles[i].Name" />
+						</li>
+					}
+				</ul>
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Save" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
+
+<div>
+	<a asp-action="Users">Back to List</a>
+</div>
