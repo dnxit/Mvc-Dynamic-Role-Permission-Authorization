@@ -10,10 +10,10 @@ namespace Mvc.RoleAuthorization.Controllers
 	[Authorize]
 	public class AdminController : Controller
 	{
+		private readonly ILogger<AdminController> _logger;
+		private readonly IDataAccessService _dataAccessService;
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
-		private readonly IDataAccessService _dataAccessService;
-		private readonly ILogger<AdminController> _logger;
 
 		public AdminController(
 				UserManager<IdentityUser> userManager,
