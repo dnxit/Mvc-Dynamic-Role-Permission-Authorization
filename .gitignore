@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Mvc-Dynamic-Role-Permission-Authorization/v17/.suo
+/Mvc.RoleAuthorization/bin/Debug/net6.0
+/.vs
+/Mvc.RoleAuthorization/obj

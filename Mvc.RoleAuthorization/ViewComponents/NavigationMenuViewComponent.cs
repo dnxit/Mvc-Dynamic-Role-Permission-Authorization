@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Mvc.RoleAuthorization.Services;
-using System.Threading.Tasks;
 
 namespace Mvc.RoleAuthorization.ViewComponents
 {

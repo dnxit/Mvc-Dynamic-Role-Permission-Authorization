@@ -1,5 +1,3 @@
-using System;
-
 namespace Mvc.RoleAuthorization.Models
 {
 	public class ErrorViewModel

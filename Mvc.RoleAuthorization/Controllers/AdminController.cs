@@ -2,17 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Mvc.RoleAuthorization.Models;
 using Mvc.RoleAuthorization.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Mvc.RoleAuthorization.Controllers
 {
-	[Authorize("Authorization")]
+	[Authorize]
 	public class AdminController : Controller
 	{
 		private readonly UserManager<IdentityUser> _userManager;
@@ -26,42 +21,37 @@ namespace Mvc.RoleAuthorization.Controllers
 				IDataAccessService dataAccessService,
 				ILogger<AdminController> logger)
 		{
-			_userManager = userManager;
-			_roleManager = roleManager;
-			_dataAccessService = dataAccessService;
-			_logger = logger;
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			_userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+			_roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
+			_dataAccessService = dataAccessService ?? throw new ArgumentNullException(nameof(dataAccessService));
 		}
 
+		[Authorize("Authorization")]
 		public async Task<IActionResult> Roles()
 		{
 			var roleViewModel = new List<RoleViewModel>();
-
-			try
+			var roles = await _roleManager.Roles.ToListAsync();
+			foreach (var item in roles)
 			{
-				var roles = await _roleManager.Roles.ToListAsync();
-				foreach (var item in roles)
+				roleViewModel.Add(new RoleViewModel()
 				{
-					roleViewModel.Add(new RoleViewModel()
-					{
-						Id = item.Id,
-						Name = item.Name,
-					});
-				}
-			}
-			catch (Exception ex)
-			{
-				_logger?.LogError(ex, ex.GetBaseException().Message);
+					Id = item.Id,
+					Name = item.Name,
+				});
 			}
 
 			return View(roleViewModel);
 		}
 
+		[Authorize("Roles")]
 		public IActionResult CreateRole()
 		{
 			return View(new RoleViewModel());
 		}
 
 		[HttpPost]
+		[Authorize("Roles")]
 		public async Task<IActionResult> CreateRole(RoleViewModel viewModel)
 		{
 			if (ModelState.IsValid)
@@ -80,31 +70,25 @@ namespace Mvc.RoleAuthorization.Controllers
 			return View(viewModel);
 		}
 
+		[Authorize("Authorization")]
 		public async Task<IActionResult> Users()
 		{
 			var userViewModel = new List<UserViewModel>();
-
-			try
+			var users = await _userManager.Users.ToListAsync();
+			foreach (var item in users)
 			{
-				var users = await _userManager.Users.ToListAsync();
-				foreach (var item in users)
+				userViewModel.Add(new UserViewModel()
 				{
-					userViewModel.Add(new UserViewModel()
-					{
-						Id = item.Id,
-						Email = item.Email,
-						UserName = item.UserName,
-					});
-				}
-			}
-			catch (Exception ex)
-			{
-				_logger?.LogError(ex, ex.GetBaseException().Message);
+					Id = item.Id,
+					Email = item.Email,
+					UserName = item.UserName,
+				});
 			}
 
 			return View(userViewModel);
 		}
 
+		[Authorize("Users")]
 		public async Task<IActionResult> EditUser(string id)
 		{
 			var viewModel = new UserViewModel();
@@ -129,7 +113,7 @@ namespace Mvc.RoleAuthorization.Controllers
 			return View(viewModel);
 		}
 
-		[HttpPost]
+		[HttpPost, Authorize("Users")]
 		public async Task<IActionResult> EditUser(UserViewModel viewModel)
 		{
 			if (ModelState.IsValid)
@@ -138,7 +122,7 @@ namespace Mvc.RoleAuthorization.Controllers
 				var userRoles = await _userManager.GetRolesAsync(user);
 
 				await _userManager.RemoveFromRolesAsync(user, userRoles);
-				await _userManager.AddToRolesAsync(user, viewModel.Roles.Where(x => x.Selected).Select(x => x.Name));
+				await _userManager.AddToRolesAsync(user, viewModel.Roles?.Where(x => x.Selected).Select(x => x.Name));
 
 				return RedirectToAction(nameof(Users));
 			}
@@ -146,6 +130,7 @@ namespace Mvc.RoleAuthorization.Controllers
 			return View(viewModel);
 		}
 
+		[Authorize("Authorization")]
 		public async Task<IActionResult> EditRolePermission(string id)
 		{
 			var permissions = new List<NavigationMenuViewModel>();
@@ -157,7 +142,7 @@ namespace Mvc.RoleAuthorization.Controllers
 			return View(permissions);
 		}
 
-		[HttpPost]
+		[HttpPost, Authorize("Authorization")]
 		public async Task<IActionResult> EditRolePermission(string id, List<NavigationMenuViewModel> viewModel)
 		{
 			if (ModelState.IsValid)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Mvc.RoleAuthorization.Models;
+using System;
 using System.Diagnostics;
 
 namespace Mvc.RoleAuthorization.Controllers
@@ -11,7 +12,7 @@ namespace Mvc.RoleAuthorization.Controllers
 
 		public HomeController(ILogger<HomeController> logger)
 		{
-			_logger = logger;
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
 		public IActionResult Index()
